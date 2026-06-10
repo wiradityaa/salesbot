@@ -1,0 +1,66 @@
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Python cache and generated files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Build and package output
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Tests and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Type checker and linter cache
+.mypy_cache/
+.ruff_cache/
+.pytype/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated ETL output
+data/DatasetPenjualanToko_cleaned.csv
+
+# Uncomment this rule if the raw dataset must not be published.
+# data/DatasetPenjualanToko.csv
