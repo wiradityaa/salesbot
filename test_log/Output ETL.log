@@ -1,0 +1,33 @@
+[Running] python -u "e:\salesbot\etl\etl_pipeline.py"
+============================================================
+SalesBot ETL Pipeline
+============================================================
+[1/8] Extracting: e:\salesbot\etl\..\data\DatasetPenjualanToko.csv
+    Rows read: 200000
+    Columns: ['Transaction_ID', 'Date', 'Product_Name', 'Category', 'Units_Sold', 'Unit_Price', 'Revenue', 'Store_Location', 'Payment_Method', 'Province', 'Unit Cost']
+    Null check: OK
+[2/8] Cleaning & transforming...
+    Duplicates dropped: 0
+    [WARN] Revenue mismatch pada 7927 baris (data quality issue - allowing to continue)
+    Rows after clean: 200000
+[INFO] Connecting to db.tgfgnmfipmsisvyarsuj.supabase.co as user postgres...
+[INFO] Connection successful
+[3/8] Loading dim_date...
+    dim_date rows: 731
+[4/8] Loading dim_product...
+    dim_product rows: 20
+[5/8] Loading dim_location...
+    dim_location rows: 97
+[6/8] Loading dim_payment...
+    dim_payment rows: 2
+[7/8] Loading fact_sales...
+    fact_sales inserted: 200000
+[8/8] Verifying...
+    Expected: 200000 | Actual in DB: 200000
+    Verification: OK
+    ANALYZE: done
+============================================================
+ETL berhasil!
+============================================================
+
+[Done] exited with code=0 in 82.831 seconds

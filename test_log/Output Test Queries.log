@@ -1,0 +1,71 @@
+[Running] python -u "e:\salesbot\test_pipeline.py"
+============================================================
+SalesBot Pipeline � Test
+============================================================
+
+Q: produk apa yang paling laris?
+----------------------------------------
+Intent : product_analysis (conf: 0.95)
+Answer : Produk yang paling laris adalah Rexona Deodorant dengan total unit penjualan sebesar **152.208** unit. 
+
+Berikut adalah peringkat 5 produk terlaris berdasarkan unit penjualan:
+
+* Rexona Deodorant (Per...
+
+
+Q: bagaimana performa penjualan di Jawa Barat?
+----------------------------------------
+Intent : province_analysis (conf: 0.97)
+Answer : Berikut adalah analisis performa penjualan di Jawa Barat berdasarkan data yang tersedia:
+
+**Total Pendapatan**: Total pendapatan penjualan di Jawa Barat sebesar Rp 32.345.825.000,00.
+
+**Jumlah Produk*...
+
+
+Q: kategori mana yang paling menguntungkan?
+----------------------------------------
+Intent : category_analysis (conf: 0.94)
+Answer : Berikut adalah analisis kategori yang paling menguntungkan berdasarkan data yang tersedia:
+
+- Kategori **Personal Care** menghasilkan total profit sebesar Rp 3.925.761.250,00.
+- Kategori **Health** ju...
+
+
+Q: tren revenue per bulan tahun 2023
+----------------------------------------
+Intent : trend_analysis (conf: 0.96)
+Answer : Berikut adalah tren revenue per bulan tahun 2023:
+
+Pada tahun 2023, total revenue mencapai Rp 19.447.438.800,00. Revenue per bulan meningkat secara konsisten sepanjang tahun, dengan bulan Desember men...
+
+
+Q: metode pembayaran apa yang paling banyak digunakan?
+----------------------------------------
+Intent : payment_analysis (conf: 0.95)
+Answer : Terjadi kesalahan saat mengambil data: connection to server at "db.tgfgnmfipmsisvyarsuj.supabase.co" (2406:da1a:b00:1300:c99:650b:caa4:3bd1), port 5432 failed: timeout expired
+. Silakan coba lagi atau...
+
+
+Q: berikan rekomendasi produk yang harus difokuskan
+----------------------------------------
+Intent : recommendation (conf: 0.93)
+Answer : Maaf, data tidak tersedia untuk filter tersebut. Data tidak tersedia untuk merekomendasikan produk yang harus difokuskan karena tidak ada informasi tentang produk atau provinsi yang dipilih....
+
+
+Q: berapa total revenue keseluruhan?
+----------------------------------------
+Intent : general_summary (conf: 0.95)
+Answer : Berikut adalah jawaban atas pertanyaan Anda tentang total revenue keseluruhan:
+
+Total revenue keseluruhan dari semua provinsi di Jawa adalah Rp 214,975,261,100.00. Jika kita tambahkan total revenue da...
+
+
+Q: siapa presiden Indonesia?
+----------------------------------------
+Intent : out_of_scope (conf: 0.99)
+Answer : Maaf, pertanyaan tersebut di luar cakupan sistem analitik penjualan ini. Saya hanya dapat menjawab pertanyaan seputar data penjualan retail di 6 provinsi Jawa - produk, kategori, provinsi, tren waktu,...
+
+
+[Done] exited with code=0 in 141.667 seconds
+

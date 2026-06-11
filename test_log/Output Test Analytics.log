@@ -1,0 +1,22 @@
+[Running] python -u "e:\salesbot\test_analytics.py"
+=======================================================
+Analytics Engine: Testing SQL Query Execution
+=======================================================
+  [PASS] top_products_by_revenue             5 rows
+  [PASS] top_products_by_units               5 rows
+  [PASS] product_performance_summary         20 rows
+  [PASS] revenue_by_province                 6 rows
+  [PASS] top_products_in_province            5 rows
+  [PASS] revenue_by_category                 7 rows
+  [PASS] category_by_province                42 rows
+  [PASS] monthly_revenue                     24 rows
+  [PASS] quarterly_revenue                   8 rows
+  [PASS] year_over_year                      2 rows
+  [PASS] revenue_by_payment                  2 rows
+  [PASS] payment_by_province                 12 rows
+=======================================================
+Result: 12/12 passed
+=======================================================
+
+[Done] exited with code=0 in 24.445 seconds
+
