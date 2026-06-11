@@ -12,12 +12,13 @@ Bagian yang sudah dikerjakan:
 - Fallback penyimpanan cleaned dataset ketika koneksi database gagal.
 - Koneksi dan helper query ke Supabase PostgreSQL.
 - Analytics berdasarkan produk, provinsi, kategori, tren waktu, dan metode pembayaran.
+- Recommendation engine berbasis rule untuk produk, provinsi, dan kategori.
+- AI agent untuk klasifikasi intent, routing tools, dan pembuatan jawaban natural.
+- Pipeline SalesBot end-to-end menggunakan Groq.
 
 Bagian yang belum dikerjakan:
 
 - Automated testing.
-- Recommendation engine.
-- AI agent dan integrasi LLM.
 - Dashboard dan halaman chat SalesBot.
 - Evaluation pipeline.
 - Deployment.
@@ -31,6 +32,24 @@ Bagian yang belum dikerjakan:
 | Category Analytics | Revenue kategori, distribusi kategori, dan produk unggulan |
 | Trend Analytics | Tren bulanan, kuartalan, tahunan, serta bulan terbaik dan terburuk |
 | Payment Analytics | Revenue, distribusi, dan tren metode pembayaran |
+
+## Recommendation Engine
+
+| Fitur | Kegunaan |
+| --- | --- |
+| Product Quadrant | Mengelompokkan produk menjadi Stars, Cash Cows, Question Marks, dan Dogs berdasarkan median volume dan profit |
+| Province Recommendation | Membandingkan revenue dan profit provinsi terhadap rata-rata nasional lalu memberikan rekomendasi |
+| Category Recommendation | Menentukan kategori yang perlu diprioritaskan, dipertahankan, atau dievaluasi berdasarkan margin |
+
+## AI Agent
+
+Pipeline SalesBot memproses pertanyaan pengguna melalui tiga tahap:
+
+1. `classify_intent()` mengubah pertanyaan menjadi intent dan filter terstruktur menggunakan Groq.
+2. `route()` memilih analytics tool atau recommendation tool yang sesuai.
+3. `generate_response()` mengubah hasil analitik menjadi jawaban bahasa Indonesia.
+
+Intent yang didukung meliputi analisis produk, provinsi, kategori, tren, metode pembayaran, rekomendasi, ringkasan umum, dan pertanyaan di luar cakupan.
 
 ## Tech Stack
 
@@ -114,6 +133,27 @@ top_products = product_analytics.top_products_by_revenue(
 province_comparison = province_analytics.province_comparison(year=2023)
 ```
 
+Contoh menggunakan recommendation engine:
+
+```python
+from recommendation import classify_product_quadrants, recommend_by_province
+
+product_quadrants = classify_product_quadrants(province="Jawa Barat", year=2023)
+province_recommendations = recommend_by_province(year=2023)
+```
+
+Contoh menjalankan pipeline SalesBot:
+
+```python
+from agents import run_pipeline
+
+result = run_pipeline("Top 5 produk terlaris di Jawa Barat tahun 2023")
+
+print(result["answer"])
+print(result["intent_data"])
+print(result["raw_data"])
+```
+
 Hasil query analytics menggunakan format:
 
 ```python
@@ -150,12 +190,17 @@ Hasil query analytics menggunakan format:
 
 ### Recommendation dan AI Agent
 
-- [ ] Membuat recommendation engine.
-- [ ] Membuat intent classifier.
-- [ ] Membuat tools untuk mengakses analytics.
-- [ ] Membuat tool router.
-- [ ] Mengintegrasikan Groq dan LangChain.
-- [ ] Membuat response generator.
+- [x] Membuat recommendation engine berbasis rule.
+- [x] Membuat klasifikasi kuadran produk.
+- [x] Membuat rekomendasi provinsi dan kategori.
+- [x] Membuat intent classifier.
+- [x] Membuat tools untuk mengakses analytics dan recommendation.
+- [x] Membuat tool router.
+- [x] Mengintegrasikan Groq.
+- [x] Membuat response generator.
+- [x] Membuat pipeline SalesBot end-to-end.
+- [ ] Menambahkan percakapan multi-turn dan penyimpanan riwayat chat.
+- [ ] Menambahkan automated test untuk recommendation dan AI agent.
 
 ### UI dan Evaluation
 
@@ -190,14 +235,14 @@ salesbot/
 |   |-- trend_analytics.py                       [done]
 |   `-- payment_analytics.py                     [done]
 |-- recommendation/
-|   |-- __init__.py                              [todo]
-|   `-- recommender.py                           [todo]
+|   |-- __init__.py                              [done]
+|   `-- recommender.py                           [done]
 |-- agents/
-|   |-- __init__.py                              [todo]
-|   |-- intent_classifier.py                     [todo]
-|   |-- tool_router.py                           [todo]
-|   |-- tools.py                                 [todo]
-|   `-- response_generator.py                    [todo]
+|   |-- __init__.py                              [done]
+|   |-- intent_classifier.py                     [done]
+|   |-- tool_router.py                           [done]
+|   |-- tools.py                                 [done]
+|   `-- response_generator.py                    [done]
 |-- ui/
 |   |-- app.py                                   [todo]
 |   |-- pages/
