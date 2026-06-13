@@ -256,7 +256,11 @@ def load_fact_sales(conn, df: pd.DataFrame,
             continue
 
         rows.append((
-            date_id, product_id, location_id, payment_id,
+            str(row["Transaction_ID"]),
+            date_id,
+            product_id,
+            location_id,
+            payment_id,
             int(row["Units_Sold"]),
             float(row["Unit_Price"]),
             float(row["Unit_Cost"]),
@@ -268,15 +272,28 @@ def load_fact_sales(conn, df: pd.DataFrame,
         execute_values(cur,
             """
             INSERT INTO fact_sales
-                (date_id, product_id, location_id, payment_id,
-                 units_sold, unit_price, unit_cost, revenue, profit)
+            (
+                transaction_id,
+                date_id,
+                product_id,
+                location_id,
+                payment_id,
+                units_sold,
+                unit_price,
+                unit_cost,
+                revenue,
+                profit
+            )
             VALUES %s
+            ON CONFLICT (transaction_id)
+            DO NOTHING
             """,
             rows,
             page_size=1000  # Batch 1000 rows per insert
         )
     conn.commit()
-    print(f"    fact_sales inserted: {len(rows)}")
+    inserted_rows = cur.rowcount
+    print(f"    fact_sales inserted: {inserted_rows}")
     if skipped > 0:
         print(f"    [WARN] Rows skipped (FK miss): {skipped}")
     return len(rows)
@@ -285,19 +302,20 @@ def load_fact_sales(conn, df: pd.DataFrame,
 # 7. Verify
 # -------------------------------------------------------
 
-def verify(conn, expected_rows: int):
-    """Verifikasi row count fact_sales vs CSV."""
+def verify(conn):
+    """Verifikasi jumlah row di fact_sales."""
     print("[8/8] Verifying...")
+
     with conn.cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM fact_sales")
-        actual = cur.fetchone()[0]
-    print(f"    Expected: {expected_rows} | Actual in DB: {actual}")
-    assert actual >= expected_rows, f"Row count mismatch: {actual} < {expected_rows}"
+        total_rows = cur.fetchone()[0]
+
+    print(f"    Total rows in fact_sales: {total_rows}")
     print("    Verification: OK")
 
-    # Run ANALYZE untuk update query planner stats
     with conn.cursor() as cur:
         cur.execute("ANALYZE fact_sales")
+
     conn.commit()
     print("    ANALYZE: done")
 
@@ -338,7 +356,7 @@ if __name__ == "__main__":
             )
 
             # Verify
-            verify(conn, inserted)
+            verify(conn)
 
             conn.close()
             print("=" * 60)

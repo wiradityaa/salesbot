@@ -21,13 +21,13 @@ SalesBot ETL Pipeline
 [6/8] Loading dim_payment...
     dim_payment rows: 2
 [7/8] Loading fact_sales...
-    fact_sales inserted: 200000
+    fact_sales inserted: 1000
 [8/8] Verifying...
-    Expected: 200000 | Actual in DB: 200000
+    Total rows in fact_sales: 200000
     Verification: OK
     ANALYZE: done
 ============================================================
 ETL berhasil!
 ============================================================
 
-[Done] exited with code=0 in 82.831 seconds
+[Done] exited with code=0 in 107.991 seconds
