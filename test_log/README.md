@@ -2,21 +2,160 @@
 
 ## Overview
 
-Dokumen ini berisi hasil pengujian sementara untuk sistem **SalesBot**, yang mencakup:
+Dokumen ini berisi pengujian untuk sistem **SalesBot**, mencakup:
 
-* ETL Pipeline Testing
-* Analytics Engine Testing
-* End-to-End Pipeline Testing
+* ETL Pipeline Testing (legacy)
+* Analytics Engine Automated Testing (pytest)
+* Recommendation Engine Automated Testing (pytest)
+* End-to-End Pipeline Testing (legacy)
 
 Tujuan pengujian adalah memastikan bahwa:
 
 * Data berhasil diekstrak, ditransformasi, dan dimuat ke database.
-* Query analytics berjalan dengan benar.
+* Query analytics berjalan dengan benar untuk semua modul.
+* Recommendation engine memberikan output yang valid.
 * Pipeline NLP → Analytics → Response Generator berfungsi sesuai intent yang terdeteksi.
 
 ---
 
-# 1. ETL Pipeline Test
+# 1. Automated Testing dengan Pytest
+
+## Setup
+
+### Install pytest
+
+```bash
+pip install pytest pytest-cov
+```
+
+### Struktur Test Files
+
+```text
+test_log/
+├── conftest.py                 # Pytest fixtures dan setup
+├── test_analytics.py           # Test suite untuk analytics modules
+├── test_recommendation.py       # Test suite untuk recommendation engine
+└── README.md                   # Documentation ini
+```
+
+## Running Tests
+
+### Run semua tests
+
+```bash
+pytest test_log/ -v
+```
+
+### Run tests untuk analytics saja
+
+```bash
+pytest test_log/test_analytics.py -v
+```
+
+### Run tests untuk recommendation saja
+
+```bash
+pytest test_log/test_recommendation.py -v
+```
+
+### Run tests dengan coverage report
+
+```bash
+pytest test_log/ -v --cov=analytics --cov=recommendation --cov-report=html
+```
+
+### Run specific test class
+
+```bash
+pytest test_log/test_analytics.py::TestProductAnalytics -v
+```
+
+### Run specific test
+
+```bash
+pytest test_log/test_analytics.py::TestProductAnalytics::test_top_products_by_revenue_returns_list -v
+```
+
+## Test Coverage
+
+### Analytics Test Suite (`test_analytics.py`)
+
+Total: **6 test classes, 30+ test cases**
+
+| Module | Tests |
+| --- | --- |
+| ProductAnalytics | 8 tests |
+| ProvinceAnalytics | 6 tests |
+| CategoryAnalytics | 4 tests |
+| TrendAnalytics | 6 tests |
+| PaymentAnalytics | 4 tests |
+| Analytics Integration | 3 tests |
+
+**Test Categories:**
+- ✅ Return type validation (mengembalikan dict/list)
+- ✅ Data structure validation
+- ✅ Filter parameter testing (province, year, limit)
+- ✅ Edge case testing
+- ✅ Integration testing (multiple queries sequential)
+
+### Recommendation Test Suite (`test_recommendation.py`)
+
+Total: **4 test classes, 15+ test cases**
+
+| Module | Tests |
+| --- | --- |
+| Product Quadrants | 4 tests |
+| Province Recommendation | 4 tests |
+| Category Recommendation | 3 tests |
+| Recommendation Integration | 4+ tests |
+
+**Test Categories:**
+- ✅ Return type validation
+- ✅ Multi-year testing
+- ✅ Consistency testing (same input → same output)
+- ✅ Format validation
+
+## Test Fixtures (`conftest.py`)
+
+Fixtures yang tersedia:
+
+```python
+@pytest.fixture
+def product_analytics()      # ProductAnalytics instance
+def province_analytics()     # ProvinceAnalytics instance
+def category_analytics()     # CategoryAnalytics instance
+def trend_analytics()        # TrendAnalytics instance
+def payment_analytics()      # PaymentAnalytics instance
+```
+
+## Expected Test Results
+
+Ketika semua tests pass, output akan terlihat seperti:
+
+```
+test_log/test_analytics.py::TestProductAnalytics::test_top_products_by_revenue_returns_list PASSED [  5%]
+test_log/test_analytics.py::TestProductAnalytics::test_top_products_with_valid_limit PASSED [ 10%]
+...
+test_log/test_recommendation.py::TestProductQuadrants::test_classify_product_quadrants_returns_dict PASSED [ 85%]
+...
+
+======= 45 passed in 15.23s =======
+```
+
+## Interpreting Test Results
+
+### PASSED ✅
+Test berhasil dan output sesuai ekspektasi.
+
+### FAILED ❌
+Test gagal. Lihat error message untuk details.
+
+### ERROR
+Error saat setup atau teardown test.
+
+---
+
+# 2. ETL Pipeline Testing (Legacy)
 
 ## File Terkait
 

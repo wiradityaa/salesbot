@@ -1,0 +1,253 @@
+{
+  "product_analysis": [
+    {
+      "id": "p1",
+      "question": "Produk apa yang paling laris tahun 2023?",
+      "intent": "product_analysis",
+      "filters": {
+        "year": 2023
+      },
+      "expected_keywords": ["produk", "revenue", "terlaris", "penjualan"],
+      "category": "basic_query"
+    },
+    {
+      "id": "p2",
+      "question": "Berapa revenue produk Laptop di Jawa Tengah?",
+      "intent": "product_analysis",
+      "filters": {
+        "product": "Laptop",
+        "province": "Jawa Tengah"
+      },
+      "expected_keywords": ["Laptop", "Jawa Tengah", "revenue"],
+      "category": "filtered_query"
+    },
+    {
+      "id": "p3",
+      "question": "Apa kategori produk Headphone dan berapa profit-nya?",
+      "intent": "product_analysis",
+      "filters": {
+        "product": "Headphone",
+        "metric": "profit"
+      },
+      "expected_keywords": ["Headphone", "profit"],
+      "category": "metric_specific"
+    }
+  ],
+  "province_analysis": [
+    {
+      "id": "pv1",
+      "question": "Provinsi mana yang punya revenue tertinggi?",
+      "intent": "province_analysis",
+      "filters": {},
+      "expected_keywords": ["provinsi", "revenue", "tertinggi"],
+      "category": "basic_query"
+    },
+    {
+      "id": "pv2",
+      "question": "Bandingkan revenue Jawa Barat dan Jawa Timur tahun 2024",
+      "intent": "province_analysis",
+      "filters": {
+        "province": ["Jawa Barat", "Jawa Timur"],
+        "year": 2024
+      },
+      "expected_keywords": ["Jawa Barat", "Jawa Timur", "bandingkan", "revenue"],
+      "category": "comparison_query"
+    },
+    {
+      "id": "pv3",
+      "question": "Produk unggulan di Sumatera Utara apa?",
+      "intent": "province_analysis",
+      "filters": {
+        "province": "Sumatera Utara",
+        "metric": "top_product"
+      },
+      "expected_keywords": ["Sumatera Utara", "unggulan", "produk"],
+      "category": "province_specific"
+    }
+  ],
+  "category_analysis": [
+    {
+      "id": "c1",
+      "question": "Kategori produk apa yang paling menguntungkan?",
+      "intent": "category_analysis",
+      "filters": {
+        "metric": "profit"
+      },
+      "expected_keywords": ["kategori", "menguntungkan", "profit"],
+      "category": "basic_query"
+    },
+    {
+      "id": "c2",
+      "question": "Berapa revenue kategori Elektronik tahun 2023?",
+      "intent": "category_analysis",
+      "filters": {
+        "category": "Elektronik",
+        "year": 2023
+      },
+      "expected_keywords": ["Elektronik", "revenue", "2023"],
+      "category": "filtered_query"
+    },
+    {
+      "id": "c3",
+      "question": "Performa kategori Furniture di Jawa Timur bagaimana?",
+      "intent": "category_analysis",
+      "filters": {
+        "category": "Furniture",
+        "province": "Jawa Timur"
+      },
+      "expected_keywords": ["Furniture", "Jawa Timur", "performa"],
+      "category": "province_category_combo"
+    }
+  ],
+  "trend_analysis": [
+    {
+      "id": "t1",
+      "question": "Tampilkan tren penjualan bulanan tahun 2023",
+      "intent": "trend_analysis",
+      "filters": {
+        "year": 2023,
+        "period": "monthly"
+      },
+      "expected_keywords": ["tren", "bulanan", "2023"],
+      "category": "time_series"
+    },
+    {
+      "id": "t2",
+      "question": "Bulan apa yang paling baik untuk penjualan?",
+      "intent": "trend_analysis",
+      "filters": {
+        "metric": "best_month"
+      },
+      "expected_keywords": ["bulan terbaik", "baik", "penjualan"],
+      "category": "best_worst"
+    },
+    {
+      "id": "t3",
+      "question": "Bagaimana tren tahun ke tahun dari 2020 sampai 2024?",
+      "intent": "trend_analysis",
+      "filters": {
+        "year": [2020, 2024],
+        "period": "yearly"
+      },
+      "expected_keywords": ["tren", "tahunan", "2020", "2024"],
+      "category": "multi_year"
+    }
+  ],
+  "payment_analysis": [
+    {
+      "id": "pay1",
+      "question": "Metode pembayaran apa yang paling banyak digunakan?",
+      "intent": "payment_analysis",
+      "filters": {},
+      "expected_keywords": ["metode pembayaran", "paling", "banyak"],
+      "category": "basic_query"
+    },
+    {
+      "id": "pay2",
+      "question": "Berapa revenue dari pembayaran debit tahun 2023?",
+      "intent": "payment_analysis",
+      "filters": {
+        "payment_method": "debit",
+        "year": 2023
+      },
+      "expected_keywords": ["debit", "revenue", "2023"],
+      "category": "method_specific"
+    },
+    {
+      "id": "pay3",
+      "question": "Distribusi metode pembayaran di Jawa Barat bagaimana?",
+      "intent": "payment_analysis",
+      "filters": {
+        "province": "Jawa Barat"
+      },
+      "expected_keywords": ["pembayaran", "Jawa Barat", "distribusi"],
+      "category": "province_specific"
+    }
+  ],
+  "recommendation": [
+    {
+      "id": "rec1",
+      "question": "Apa rekomendasi strategi bisnis untuk tahun depan?",
+      "intent": "recommendation",
+      "filters": {},
+      "expected_keywords": ["rekomendasi", "strategi", "bisnis"],
+      "category": "general_recommendation"
+    },
+    {
+      "id": "rec2",
+      "question": "Produk apa yang perlu diprioritaskan dan mana yang perlu dievaluasi?",
+      "intent": "recommendation",
+      "filters": {},
+      "expected_keywords": ["prioritas", "produk", "kategori"],
+      "category": "product_prioritization"
+    },
+    {
+      "id": "rec3",
+      "question": "Provinsi mana yang paling potensial untuk ekspansi?",
+      "intent": "recommendation",
+      "filters": {},
+      "expected_keywords": ["provinsi", "potensial", "ekspansi"],
+      "category": "province_recommendation"
+    }
+  ],
+  "general_summary": [
+    {
+      "id": "gen1",
+      "question": "Berikan ringkasan performa penjualan tahun 2023",
+      "intent": "general_summary",
+      "filters": {
+        "year": 2023
+      },
+      "expected_keywords": ["ringkasan", "performa", "2023"],
+      "category": "general_overview"
+    },
+    {
+      "id": "gen2",
+      "question": "Apa insight utama dari data penjualan kita?",
+      "intent": "general_summary",
+      "filters": {},
+      "expected_keywords": ["insight", "data", "penjualan"],
+      "category": "key_insights"
+    }
+  ],
+  "out_of_scope": [
+    {
+      "id": "oos1",
+      "question": "Cuaca di Jawa Tengah hari ini bagaimana?",
+      "intent": "out_of_scope",
+      "filters": {},
+      "expected_keywords": ["maaf", "luar", "cakupan"],
+      "category": "irrelevant_query"
+    },
+    {
+      "id": "oos2",
+      "question": "Berapa harga Bitcoin saat ini?",
+      "intent": "out_of_scope",
+      "filters": {},
+      "expected_keywords": ["maaf", "cakupan", "sistem"],
+      "category": "completely_unrelated"
+    }
+  ],
+  "metadata": {
+    "total_questions": 29,
+    "created_at": "2024-01-15",
+    "version": "1.0",
+    "categories": [
+      "product_analysis",
+      "province_analysis",
+      "category_analysis",
+      "trend_analysis",
+      "payment_analysis",
+      "recommendation",
+      "general_summary",
+      "out_of_scope"
+    ],
+    "evaluation_criteria": [
+      "intent_accuracy: Apakah AI benar mengenali intent?",
+      "answer_relevance: Apakah jawaban relevan dengan pertanyaan?",
+      "data_accuracy: Apakah angka dalam jawaban sesuai data?",
+      "language_quality: Apakah bahasa jelas dan profesional?",
+      "completeness: Apakah jawaban cukup lengkap?"
+    ]
+  }
+}

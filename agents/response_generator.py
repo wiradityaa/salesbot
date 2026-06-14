@@ -35,10 +35,16 @@ JANGAN:
 # -------------------------------------------------------
 
 def generate_response(user_query: str, analytics_data: dict,
-                       intent_data: dict) -> str:
+                       intent_data: dict, conversation_context: str = "") -> str:
     """
     Generate jawaban natural language dari data analytics.
     LLM hanya bertugas menulis - tidak boleh mengubah angka.
+    
+    Args:
+        user_query: Pertanyaan user
+        analytics_data: Hasil dari analytics/recommendation tools
+        intent_data: Intent classification hasil
+        conversation_context: (Optional) Konteks percakapan sebelumnya untuk multi-turn
     """
     if analytics_data.get("status") == "out_of_scope":
         return (
@@ -66,8 +72,17 @@ def generate_response(user_query: str, analytics_data: dict,
             if isinstance(data_preview[key], list):
                 data_preview[key] = data_preview[key][:10]
 
+    # Include conversation context jika tersedia
+    conversation_section = ""
+    if conversation_context:
+        conversation_section = f"""
+Konteks percakapan sebelumnya:
+{conversation_context}
+
+"""
+
     context = f"""
-Pertanyaan user: {user_query}
+{conversation_section}Pertanyaan user: {user_query}
 
 Intent terdeteksi: {intent_data.get('intent', 'unknown')}
 Filter aktif:

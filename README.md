@@ -15,13 +15,20 @@ Bagian yang sudah dikerjakan:
 - Recommendation engine berbasis rule untuk produk, provinsi, dan kategori.
 - AI agent untuk klasifikasi intent, routing tools, dan pembuatan jawaban natural.
 - Pipeline SalesBot end-to-end menggunakan Groq.
+- **Dashboard interaktif dengan visualisasi real-time** (Revenue per provinsi, kategori, tren bulanan, KPI cards).
+- **Halaman chat SalesBot** dengan AI Agent untuk Q&A berbasis data penjualan.
+- **UI components** (charts dan KPI cards) untuk reusability.
+- **Chat history persistence** - Percakapan disimpan ke file dan dapat dimuat kembali.
+- **Multi-turn conversation support** - AI Agent mempertimbangkan konteks percakapan sebelumnya.
+- **29 evaluation test questions** untuk mengevaluasi kualitas SalesBot.
+- **Evaluation pipeline** untuk mengukur intent accuracy, relevance, dan performance metrics.
+- **Automated testing suite** - 31 test cases untuk analytics, 15+ test cases untuk recommendation engine dengan pytest.
+- **Test documentation** - Comprehensive test documentation di test_log/README.md.
 
 Bagian yang belum dikerjakan:
 
-- Automated testing.
-- Dashboard dan halaman chat SalesBot.
-- Evaluation pipeline.
-- Deployment.
+- Migration script untuk reset database.
+- Dokumentasi deployment dan infrastructure setup.
 
 ## Fitur Analytics
 
@@ -62,6 +69,8 @@ Intent yang didukung meliputi analisis produk, provinsi, kategori, tren, metode 
 - Groq
 - Streamlit
 - Plotly
+- pytest (untuk automated testing)
+- pytest-cov (untuk coverage report)
 
 ## Setup
 
@@ -165,6 +174,140 @@ Hasil query analytics menggunakan format:
 }
 ```
 
+## Evaluasi SalesBot
+
+Jalankan evaluation pipeline untuk menilai kualitas SalesBot:
+
+```bash
+python evaluation/evaluate.py
+```
+
+**Metrics yang diukur:**
+- **Intent Accuracy**: Berapa persen AI mengenali intent dengan benar
+- **Relevance Score**: Apakah jawaban memuat keywords yang diharapkan
+- **Language Quality**: Kualitas bahasa Indonesia yang digunakan
+- **Completeness**: Apakah jawaban cukup lengkap
+- **Clarity**: Kejelasan penyajian informasi
+- **Latency**: Kecepatan processing (ms)
+
+**Output:**
+- Detailed report: `evaluation/reports/eval_report_YYYYMMDD_HHMMSS.json`
+- Summary metrics printed to console
+- History tracking semua evaluation runs
+
+Contoh hasil evaluation:
+
+```text
+SALESBOT EVALUATION REPORT
+
+Total Questions Tested: 29
+Successful Runs: 29
+Failed Runs: 0
+
+QUALITY METRICS
+Intent Accuracy: 95.2%
+Avg Relevance Score: 0.87/1.0
+Avg Language Quality: 0.98/1.0
+Avg Completeness: 0.91/1.0
+Avg Clarity: 0.95/1.0
+
+PERFORMANCE METRICS
+Avg Latency: 2840ms
+```
+
+## Automated Testing
+
+### Running Tests dengan Pytest
+
+Jalankan automated tests untuk verifikasi analytics dan recommendation modules:
+
+```bash
+# Run semua tests
+python -m pytest test_log/ -v
+
+# Run analytics tests saja
+python -m pytest test_log/test_analytics.py -v
+
+# Run recommendation tests saja
+python -m pytest test_log/test_recommendation.py -v
+
+# Run dengan coverage report
+python -m pytest test_log/ -v --cov=analytics --cov=recommendation --cov-report=html
+```
+
+### Test Coverage
+
+**Analytics Tests:** 31 test cases
+- ProductAnalytics: 8 tests
+- ProvinceAnalytics: 6 tests
+- CategoryAnalytics: 4 tests
+- TrendAnalytics: 6 tests
+- PaymentAnalytics: 4 tests
+- Analytics Integration: 3 tests
+
+**Recommendation Tests:** 15+ test cases
+- Product Quadrants: 4 tests
+- Province Recommendation: 4 tests
+- Category Recommendation: 3 tests
+- Recommendation Integration: 4+ tests
+
+### Test Fixtures
+
+Tests menggunakan pytest fixtures untuk efficient setup:
+
+```python
+@pytest.fixture
+def product_analytics       # ProductAnalytics instance
+def province_analytics      # ProvinceAnalytics instance
+def category_analytics      # CategoryAnalytics instance
+def trend_analytics         # TrendAnalytics instance
+def payment_analytics       # PaymentAnalytics instance
+```
+
+Lihat `test_log/README.md` untuk dokumentasi testing lebih lengkap.
+
+## Menjalankan UI Streamlit
+
+Setelah setup selesai, jalankan aplikasi Streamlit dengan:
+
+```bash
+streamlit run ui/app.py
+```
+
+Aplikasi akan membuka di browser pada `http://localhost:8501`.
+
+### Halaman yang Tersedia:
+
+1. **Home** (`ui/app.py`)
+   - Hero section dan feature overview
+   - Navigasi ke Dashboard dan SalesBot Chat
+
+2. **Dashboard** (`ui/pages/1_Dashboard.py`)
+   - KPI cards dengan metrik utama
+   - Revenue by Province (grafik interaktif)
+   - Revenue by Category (grafik interaktif)
+   - Monthly Trend (grafik tren penjualan)
+
+3. **SalesBot Chat** (`ui/pages/2_SalesBot.py`)
+   - Chat interface untuk Q&A berbasis data
+   - Proses natural language menggunakan AI Agent
+   - Jawaban terstruktur dengan insight otomatis
+   - Quick question buttons untuk pertanyaan umum
+
+## Chat History & Multi-turn Conversation
+
+Chat history otomatis disimpan ke `data/chat_history/conversations.json`. Setiap percakapan tersimpan dengan:
+- Unique conversation ID
+- Timestamp (created_at dan updated_at)
+- Semua messages (user dan assistant)
+
+**Fitur:**
+- Sidebar menampilkan daftar recent conversations
+- Klik conversation untuk memuat ulang history
+- Delete individual conversation dengan tombol 🗑
+- Multi-turn awareness: AI Agent mempertimbangkan konteks percakapan sebelumnya
+- Clear Chat untuk reset session saat ini tanpa menghapus file
+
 ## TODO
 
 ### Data dan Database
@@ -185,7 +328,7 @@ Hasil query analytics menggunakan format:
 - [x] Membuat trend analytics.
 - [x] Membuat payment analytics.
 - [ ] Menambahkan validasi parameter analytics.
-- [ ] Menambahkan automated test untuk seluruh query analytics.
+- [x] Menambahkan automated test untuk seluruh query analytics.
 - [ ] Menambahkan logging dan error handling yang lebih spesifik.
 
 ### Recommendation dan AI Agent
@@ -199,16 +342,17 @@ Hasil query analytics menggunakan format:
 - [x] Mengintegrasikan Groq.
 - [x] Membuat response generator.
 - [x] Membuat pipeline SalesBot end-to-end.
-- [ ] Menambahkan percakapan multi-turn dan penyimpanan riwayat chat.
-- [ ] Menambahkan automated test untuk recommendation dan AI agent.
+- [x] Menambahkan percakapan multi-turn dan penyimpanan riwayat chat.
+- [x] Menambahkan automated test untuk recommendation dan AI agent.
 
 ### UI dan Evaluation
 
-- [ ] Membuat dashboard Streamlit.
-- [ ] Membuat KPI cards dan charts.
-- [ ] Membuat halaman chat SalesBot.
-- [ ] Membuat kumpulan pertanyaan evaluasi.
-- [ ] Membuat evaluation pipeline.
+- [x] Membuat dashboard Streamlit.
+- [x] Membuat KPI cards dan charts.
+- [x] Membuat halaman chat SalesBot.
+- [x] Menambahkan percakapan multi-turn dan penyimpanan riwayat chat.
+- [x] Menambahkan kumpulan pertanyaan evaluasi (test_questions.json).
+- [x] Membuat evaluation pipeline.
 - [ ] Menambahkan dokumentasi deployment.
 
 ## Project Structure
@@ -244,16 +388,23 @@ salesbot/
 |   |-- tools.py                                 [done]
 |   `-- response_generator.py                    [done]
 |-- ui/
-|   |-- app.py                                   [todo]
+|   |-- app.py                                   [done]
+|   |-- chat_manager.py                          [done]
 |   |-- pages/
-|   |   |-- 1_Dashboard.py                       [todo]
-|   |   `-- 2_SalesBot.py                        [todo]
+|   |   |-- 1_Dashboard.py                       [done]
+|   |   `-- 2_SalesBot.py                        [done]
 |   `-- components/
-|       |-- kpi_cards.py                         [todo]
-|       `-- charts.py                            [todo]
+|       |-- kpi_cards.py                         [done]
+|       `-- charts.py                            [done]
 |-- evaluation/
-|   |-- test_questions.json                      [todo]
-|   `-- evaluate.py                              [todo]
+|   |-- test_questions.json                      [done]
+|   |-- evaluate.py                              [done]
+|   `-- reports/                                 [auto-generated]
+|-- test_log/
+|   |-- conftest.py                              [done]
+|   |-- test_analytics.py                        [done]
+|   |-- test_recommendation.py                   [done]
+|   `-- README.md                                [done]
 |-- .streamlit/
 |   `-- secrets.toml                             [todo, gitignored]
 |-- requirements.txt                             [done]
