@@ -33,6 +33,39 @@ class TrendAnalytics:
         return execute_query(sql, tuple(params))
 
     # -------------------------------------------------------
+    # Daily revenue — drill down untuk satu bulan
+    # -------------------------------------------------------
+
+    def daily_revenue(self, month: int, year: int = None,
+                      province: str = None) -> dict:
+        """Revenue per hari untuk satu bulan tertentu (drill down)."""
+        filters, params = _build_filters(province=province, year=year)
+
+        if filters:
+            filters += " AND d.month = %s"
+        else:
+            filters = "WHERE d.month = %s"
+        params.append(month)
+
+        sql = f"""
+            SELECT
+                d.full_date,
+                d.day,
+                d.weekday,
+                SUM(f.revenue)    AS total_revenue,
+                SUM(f.profit)     AS total_profit,
+                SUM(f.units_sold) AS total_units,
+                COUNT(*)          AS transaction_count
+            FROM fact_sales f
+            JOIN dim_location l ON f.location_id = l.location_id
+            JOIN dim_date     d ON f.date_id      = d.date_id
+            {filters}
+            GROUP BY d.full_date, d.day, d.weekday
+            ORDER BY d.full_date
+        """
+        return execute_query(sql, tuple(params))
+
+    # -------------------------------------------------------
     # Quarterly revenue
     # -------------------------------------------------------
 
