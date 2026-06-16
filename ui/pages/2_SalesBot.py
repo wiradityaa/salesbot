@@ -9,14 +9,6 @@ import streamlit as st
 from agents.intent_classifier import classify_intent
 from agents.tool_router import route
 from agents.response_generator import generate_response
-from ui.chat_manager import (
-    get_all_conversations,
-    create_conversation,
-    save_message,
-    get_conversation_context,
-    delete_conversation,
-    clear_all_conversations
-)
 
 st.set_page_config(
     page_title="SalesBot AI",
@@ -97,6 +89,37 @@ hr {
     border-radius: 10px;
 }
 
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 768px) {
+    .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    /* Stack columns on mobile */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
+    }
+    /* Sidebar narrower */
+    [data-testid="stSidebar"] {
+        min-width: 160px !important;
+        max-width: 200px !important;
+    }
+    /* Chat input always full width */
+    [data-testid="stChatInput"] {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .block-container { padding: 0.4rem 0.25rem !important; }
+    h2 { font-size: 1rem !important; }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -108,11 +131,10 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "conversations" not in st.session_state:
-    # Load conversations dari file
-    st.session_state.conversations = get_all_conversations()
+    st.session_state.conversations = []
 
-if "active_conv_id" not in st.session_state:
-    st.session_state.active_conv_id = None
+if "active_conv_idx" not in st.session_state:
+    st.session_state.active_conv_idx = None
 
 # =====================================
 # SIDEBAR
@@ -138,12 +160,14 @@ with st.sidebar:
     if st.button("➕ New Conversation", use_container_width=True, type="primary"):
         if st.session_state.messages:
             first_msg = st.session_state.messages[0]["content"]
-            conv = create_conversation(first_msg)
-            st.session_state.conversations = get_all_conversations()
-            for msg in st.session_state.messages:
-                save_message(conv["id"], msg["role"], msg["content"])
+            title = first_msg[:28] + "..." if len(first_msg) > 28 else first_msg
+            st.session_state.conversations.insert(0, {
+                "title": title,
+                "time": "now",
+                "messages": st.session_state.messages.copy()
+            })
         st.session_state.messages = []
-        st.session_state.active_conv_id = None
+        st.session_state.active_conv_idx = None
         st.rerun()
 
     st.markdown("<hr style='border-color:#1e293b;margin:0.75rem 0;'>",
@@ -158,24 +182,19 @@ with st.sidebar:
 
     if st.session_state.conversations:
         for i, conv in enumerate(st.session_state.conversations):
-            col_t, col_del = st.columns([5, 1])
+            col_t, col_time = st.columns([3, 1])
             with col_t:
-                if st.button(conv["title"], key=f"conv_{conv['id']}",
+                if st.button(conv["title"], key=f"conv_{i}",
                              use_container_width=True):
-                    st.session_state.messages = [
-                        {"role": msg["role"], "content": msg["content"]}
-                        for msg in conv["messages"]
-                    ]
-                    st.session_state.active_conv_id = conv["id"]
+                    st.session_state.messages = conv["messages"].copy()
+                    st.session_state.active_conv_idx = i
                     st.rerun()
-            with col_del:
-                if st.button("🗑", key=f"del_{conv['id']}", help="Delete conversation"):
-                    delete_conversation(conv["id"])
-                    st.session_state.conversations = get_all_conversations()
-                    if st.session_state.active_conv_id == conv["id"]:
-                        st.session_state.messages = []
-                        st.session_state.active_conv_id = None
-                    st.rerun()
+            with col_time:
+                st.markdown(
+                    f"<p style='color:#334155;font-size:0.68rem;"
+                    f"padding-top:9px;'>{conv['time']}</p>",
+                    unsafe_allow_html=True
+                )
     else:
         st.markdown(
             "<p style='color:#334155;font-size:0.82rem;'>No conversations yet.</p>",
@@ -186,10 +205,9 @@ with st.sidebar:
                 unsafe_allow_html=True)
 
     if st.button("🗑 Clear Conversations", use_container_width=True):
-        clear_all_conversations()
         st.session_state.conversations = []
         st.session_state.messages = []
-        st.session_state.active_conv_id = None
+        st.session_state.active_conv_idx = None
         st.rerun()
 
     st.markdown("<hr style='border-color:#1e293b;margin:0.75rem 0;'>",
@@ -300,7 +318,6 @@ with right_col:
     with chat_right:
         if st.button("🗑 Clear Chat", use_container_width=True):
             st.session_state.messages = []
-            st.session_state.active_conv_id = None
             st.rerun()
 
     st.markdown("<hr style='border-color:#1e293b;margin:0.75rem 0;'>",
@@ -327,19 +344,9 @@ with right_col:
         with st.chat_message("assistant"):
             with st.spinner("Menganalisis data..."):
                 try:
-                    # Create conversation jika belum ada
-                    if not st.session_state.active_conv_id:
-                        conv = create_conversation(prompt)
-                        st.session_state.active_conv_id = conv["id"]
-                        st.session_state.conversations = get_all_conversations()
-
-                    # Get conversation context untuk multi-turn awareness
-                    conv_context = get_conversation_context(st.session_state.active_conv_id)
-
-                    # Process dengan AI
                     intent = classify_intent(prompt)
                     result = route(intent["data"])
-                    answer = generate_response(prompt, result, intent["data"], conv_context)
+                    answer = generate_response(prompt, result, intent["data"])
                 except Exception as e:
                     answer = (
                         "Maaf, terjadi kesalahan saat memproses pertanyaan Anda. "
@@ -349,11 +356,13 @@ with right_col:
 
         st.session_state.messages.append({"role": "assistant", "content": answer})
 
-        # Save ke file
-        if st.session_state.active_conv_id:
-            save_message(st.session_state.active_conv_id, "user", prompt)
-            save_message(st.session_state.active_conv_id, "assistant", answer)
-            # Refresh conversations dari file
-            st.session_state.conversations = get_all_conversations()
+        if len(st.session_state.messages) == 2:
+            first_msg = st.session_state.messages[0]["content"]
+            title = first_msg[:28] + "..." if len(first_msg) > 28 else first_msg
+            st.session_state.conversations.insert(0, {
+                "title": title,
+                "time": "now",
+                "messages": st.session_state.messages.copy()
+            })
 
         st.rerun()
